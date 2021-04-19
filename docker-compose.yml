@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  redis:
+    image: "redis:5.0.4-stretch"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "redis:/data"
+  app:
+    image: allure-server
+    volumes:
+      - ./allure_data:/allure_data
+      - ./db:/db
+    ports:
+      - "8001:8001"
+  worker:
+    restart: always
+    image: allure-server
+    volumes:
+      - ./allure_data:/allure_data
+    depends_on:
+      - redis
+    command: "/bin/sh -c ./run_worker.sh"
+volumes:
+  redis: {}
